@@ -41,6 +41,12 @@ var frontmatterAndBody = [
   ['--- \nfoo: bar\n--- \nbaz', { foo: 'bar' }, 'baz'],
   ['--- \nfoo: bar\n--- \n\n', { foo: 'bar' }, '\n']
 ];
+var frontmatterAndBodyWithCustomDelimiter = [
+  ['{{!\nfoo: bar\n!}}\nbaz', '{{!', '!}}', { foo: 'bar' }, 'baz'],
+  ['{{!\nfoo: bar\n!}}\n\n', '{{!', '!}}', { foo: 'bar' }, '\n'],
+  ['{{! \nfoo: bar\n!}} \nbaz', '{{!', '!}}', { foo: 'bar' }, 'baz'],
+  ['{{! \nfoo: bar\n!}} \n\n', '{{!', '!}}', { foo: 'bar' }, '\n']
+];
 
 describe('fastmatter(str)', function() {
 
@@ -49,6 +55,15 @@ describe('fastmatter(str)', function() {
       expect(fastmatter(f[0])).toEqual({
         attributes: f[1],
         body: f[2]
+      });
+    });
+  };
+
+  var overrideHelper = function(fixtures) {
+    each(fixtures, function(f) {
+      expect(fastmatter(f[0], f[1], f[2])).toEqual({
+        attributes: f[3],
+        body: f[4]
       });
     });
   };
@@ -75,6 +90,10 @@ describe('fastmatter(str)', function() {
 
   it('can parse both frontmatter and body', function() {
     helper(frontmatterAndBody);
+  });
+
+  it('can parse both frontmatter and body with overriden delimiters', function() {
+    overrideHelper(frontmatterAndBodyWithCustomDelimiter);
   });
 
 });
